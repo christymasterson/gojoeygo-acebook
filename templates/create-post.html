@@ -1,0 +1,11 @@
+{{ template "header.html" .}}
+
+<h1>Create Post</h1>
+
+<form action="/post/create" method="POST">
+  <input type="text" name="content" placeholder="put your post here">
+  <input type="submit" value="Submit">
+  </form>
+
+
+{{template "footer.html" .}}
