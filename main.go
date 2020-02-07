@@ -21,8 +21,18 @@ func setupRouter() *gin.Engine {
 				"title": "Home Page",
 			},
 		)
-
 	})
+	
+	router.GET("/create", func(c *gin.Context) {
+		c.HTML(
+			http.StatusOK,
+			"create-post.html",
+			gin.H{
+				"title": "Create New Post",
+			},
+		)
+	})
+
 return router
 }
 
