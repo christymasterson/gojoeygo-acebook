@@ -1,0 +1,5 @@
+CREATE TABLE posts (
+   post_id serial PRIMARY KEY,
+   content VARCHAR (500) NOT NULL,
+   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

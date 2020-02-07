@@ -1,16 +1,23 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
-var router *gin.Engine
+const (
+	host   = "localhost"
+	port   = 5432
+	dbname = "acebook"
+)
 
-func main() {
+func setupRouter() *gin.Engine {
 
-	router = gin.Default()
+	router := gin.Default()
 
 	router.LoadHTMLGlob("templates/*")
 
@@ -25,7 +32,33 @@ func main() {
 		)
 
 	})
+	return router
+}
 
-	router.Run()
+func databaseAddition() {
+	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
+		" dbname=%s sslmode=disable",
+		host, port, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	sqlStatement := `
+	INSERT INTO posts (post_id, content)
+	VALUES ($1, $2)`
+	_, err = db.Exec(sqlStatement, 2, "Testing adding a second post")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("New post is added")
+
+}
+
+func main() {
+	databaseAddition()
+	router := setupRouter()
+	router.Run(":8080")
 
 }
