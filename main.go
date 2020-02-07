@@ -31,8 +31,7 @@ func setupRouter() *gin.Engine {
 			},
 		)
 	})
-<<<<<<< HEAD
-	
+
 	router.GET("/create", func(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
@@ -43,8 +42,6 @@ func setupRouter() *gin.Engine {
 		)
 	})
 
-return router
-=======
 	return router
 }
 
@@ -61,13 +58,12 @@ func databaseAddition() {
 	sqlStatement := `
 	INSERT INTO posts (post_id, content)
 	VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, 2, "Testing adding a second post")
+	_, err = db.Exec(sqlStatement, 4, "Testing yet another post")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("New post is added")
 
->>>>>>> database_setup_branch
 }
 
 func main() {
