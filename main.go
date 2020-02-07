@@ -42,32 +42,40 @@ func setupRouter() *gin.Engine {
 		)
 	})
 
+	router.POST("/post/create", func(c *gin.Context){
+		post := c.PostForm("content")
+
+		psqlInfo := fmt.Sprintf("host=%s port=%d  "+
+			" dbname=%s sslmode=disable",
+			host, port, dbname)
+		db, err := sql.Open("postgres", psqlInfo)
+		if err != nil {
+			panic(err)
+		}
+		defer db.Close()
+
+		sqlStatement := `
+		INSERT INTO posts (content)
+		VALUES ($1)`
+		_, err = db.Exec(sqlStatement, post)
+		if err != nil {
+			panic(err)
+		}
+
+			c.HTML(
+				http.StatusOK,
+				"index.html",
+				gin.H{
+					"title": "Home Page",
+				},
+			)
+	})
+
 	return router
 }
 
-func databaseAddition() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
-		" dbname=%s sslmode=disable",
-		host, port, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	sqlStatement := `
-	INSERT INTO posts (post_id, content)
-	VALUES ($1, $2)`
-	_, err = db.Exec(sqlStatement, 4, "Testing yet another post")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("New post is added")
-
-}
-
 func main() {
-	databaseAddition()
+
 	router := setupRouter()
 	router.Run(":8080")
 
