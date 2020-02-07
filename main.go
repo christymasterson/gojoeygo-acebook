@@ -6,11 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var router *gin.Engine
+func setupRouter() *gin.Engine {
 
-func main() {
-
-	router = gin.Default()
+	router := gin.Default()
 
 	router.LoadHTMLGlob("templates/*")
 
@@ -25,7 +23,10 @@ func main() {
 		)
 
 	})
+return router
+}
 
-	router.Run()
-
+func main() {
+	router := setupRouter()
+	router.Run(":8080")
 }
