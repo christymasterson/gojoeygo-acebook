@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	// "log"
 	"net/http"
 	"time"
 
@@ -41,27 +41,17 @@ func setupRouter() *gin.Engine {
 		defer db.Close()
 
 		sqlStatement := `SELECT * FROM posts ORDER BY created_at DESC`
-		rows, err := db.Query(sqlStatement)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer rows.Close()
+
+		rows, _ := db.Query(sqlStatement)
 
 		posts := make([]post, 0)
 
 		for rows.Next() {
 			var entry post
-			if err := rows.Scan(&entry.ID, &entry.Content, &entry.Date  ); err != nil {
-				// Check for a scan error.
-				// Query rows will be closed with defer.
-				log.Fatal(err)
-			}
+			rows.Scan(&entry.ID, &entry.Content, &entry.Date  )
 			posts = append(posts, entry)
 	}
-err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
+
 		c.HTML(
 			http.StatusOK,
 			"index.html",
