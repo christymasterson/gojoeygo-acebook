@@ -6,7 +6,7 @@
   <h1>Welcome to Acebook!</h1>
 
   {{range .payload }}
-   <a href="/post/view/{{.ID}}">
+   <a href="/post/{{.ID}}">
      <h2>{{.Content}}</h2>
    </a>
    <p>{{.Date}}</p>
