@@ -10,11 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	host   = "localhost"
-	port   = 5432
-	dbname = "acebook"
-)
 
 type post struct {
   ID      int
