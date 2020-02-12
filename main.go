@@ -36,6 +36,8 @@ func setupRouter() *gin.Engine {
 
 	router.POST("/signup", ensureNotLoggedIn(), signUp)
 
+	router.POST("/like/create", ensureLoggedIn(), createLike)
+
 	return router
 }
 
