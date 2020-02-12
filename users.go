@@ -3,13 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
-
 
 func showSignUpPage(c *gin.Context) {
 	c.HTML(
@@ -50,6 +51,10 @@ func signUp(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
+	token := strconv.FormatInt(rand.Int63(), 16)
+	c.SetCookie("token", token, 3600, "", "", false, true)
+	c.Set("is_logged_in", true)
+
 	c.Redirect(
 		303,
 		"/",
@@ -71,24 +76,39 @@ func logIn(c *gin.Context) {
 	defer db.Close()
 
 	var (
-			userCount		int
-			user_id int
-			email  string
-			password  string
-		)
+		userCount int
+		user_id   int
+		email     string
+		password  string
+	)
 
-db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", remail).Scan(&userCount, &user_id, &email, &password)
+	db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", remail).Scan(&userCount, &user_id, &email, &password)
 
 	if password == rpassword {
-		c.Redirect (
+
+		token := strconv.FormatInt(rand.Int63(), 16)
+		c.SetCookie("token", token, 3600, "", "", false, true)
+		c.Set("is_logged_in", true)
+
+		c.Redirect(
 			303,
 			"/",
 		)
+
 	} else {
-		c.Redirect (
+		c.Redirect(
 			303,
 			"/signup",
 		)
 	}
 
+}
+
+func logOut(c *gin.Context) {
+	// Clear the cookie
+	c.SetCookie("token", "", -1, "", "", false, true)
+	c.Redirect(
+		303,
+		"/login",
+	)
 }

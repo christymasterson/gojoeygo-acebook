@@ -1,4 +1,6 @@
 <!--index.html-->
+<!--Embed the menu.html template at this location-->
+{{ template "menu.html" . }}
 
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
@@ -6,9 +8,7 @@
   <h1>Welcome to Acebook!</h1>
 
   {{range .payload }}
-   <a href="/post/{{.ID}}">
      <h2>{{.Content}}</h2>
-   </a>
    <p>{{.Date}}</p>
   {{end}}
 
