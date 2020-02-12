@@ -86,7 +86,8 @@ func logIn(c *gin.Context) {
 
 	if password == rpassword {
 
-		token := strconv.FormatInt(rand.Int63(), 16)
+		token := strconv.Itoa(user_id)
+
 		c.SetCookie("token", token, 3600, "", "", false, true)
 		c.Set("is_logged_in", true)
 
