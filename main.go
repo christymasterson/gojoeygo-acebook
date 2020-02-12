@@ -1,6 +1,8 @@
 package main
 
-import	"github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 const (
 	host   = "localhost"
@@ -16,19 +18,23 @@ func setupRouter() *gin.Engine {
 
 	router.LoadHTMLGlob("templates/*")
 
-	router.GET("/", showIndexPage)
+	router.Use(setUserStatus())
 
-	router.GET("/create", showPostCreatePage)
+	router.GET("/", ensureLoggedIn(), showIndexPage)
 
-	router.POST("/post/create", createPost)
+	router.GET("/create", ensureLoggedIn(), showPostCreatePage)
 
-	router.GET("/login", showLogInPage)
+	router.POST("/post/create", ensureLoggedIn(), createPost)
 
-	router.POST("/login", logIn)
+	router.GET("/login", ensureNotLoggedIn(), showLogInPage)
 
-	router.GET("/signup", showSignUpPage)
+	router.GET("/logout", ensureLoggedIn(), logOut)
 
-	router.POST("/signup", signUp)
+	router.POST("/login", ensureNotLoggedIn(), logIn)
+
+	router.GET("/signup", ensureNotLoggedIn(), showSignUpPage)
+
+	router.POST("/signup", ensureNotLoggedIn(), signUp)
 
 	return router
 }
@@ -37,4 +43,41 @@ func main() {
 
 	router := setupRouter()
 	router.Run()
+}
+
+func ensureLoggedIn() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		loggedInInterface, _ := c.Get("is_logged_in")
+		loggedIn := loggedInInterface.(bool)
+		if !loggedIn {
+			c.Redirect(
+				303,
+				"/login",
+			)
+		}
+	}
+
+}
+
+func ensureNotLoggedIn() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		loggedInInterface, _ := c.Get("is_logged_in")
+		loggedIn := loggedInInterface.(bool)
+		if loggedIn {
+			c.Redirect(
+				303,
+				"/",
+			)
+		}
+	}
+}
+
+func setUserStatus() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if token, err := c.Cookie("token"); err == nil || token != "" {
+			c.Set("is_logged_in", true)
+		} else {
+			c.Set("is_logged_in", false)
+		}
+	}
 }
