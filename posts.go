@@ -16,11 +16,11 @@ type post struct {
 	Surname string
 	Content string
 	Date    time.Time
-	Likes		int
+	Likes   int
 }
 
 type user struct {
-	Name    string
+	Name string
 }
 
 func showIndexPage(c *gin.Context) {
@@ -48,9 +48,14 @@ func showIndexPage(c *gin.Context) {
 		posts = append(posts, entry)
 	}
 	users := make([]user, 0)
-	cookie, _ := c.Cookie("token")
-	rows, _ = db.Query("SELECT first_name FROM users WHERE user_id=$1", cookie)
-
+	cookie, err := c.Cookie("token")
+	if err != nil {
+		panic(err)
+	}
+	rows, err = db.Query("SELECT first_name FROM users WHERE user_id=$1", cookie)
+	if err != nil {
+		panic(err)
+	}
 	for rows.Next() {
 		var person user
 		rows.Scan(&person.Name)
@@ -63,7 +68,7 @@ func showIndexPage(c *gin.Context) {
 		gin.H{
 			"title":   "Home Page",
 			"payload": posts,
-			"user": users,
+			"user":    users,
 		},
 	)
 }
