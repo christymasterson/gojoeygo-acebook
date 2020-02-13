@@ -16,6 +16,11 @@ type post struct {
 	Surname string
 	Content string
 	Date    time.Time
+	Likes		int
+}
+
+type user struct {
+	Name    string
 }
 
 func showIndexPage(c *gin.Context) {
@@ -29,7 +34,7 @@ func showIndexPage(c *gin.Context) {
 	}
 	defer db.Close()
 
-	sqlStatement := `SELECT posts.post_id, users.first_name, users.last_name, posts.content, posts.created_at FROM posts JOIN users ON posts.created_by = users.user_id ORDER BY created_at DESC`
+	sqlStatement := `SELECT posts.post_id, users.first_name, users.last_name, posts.content, posts.created_at, COUNT (likes.post_liked) AS likesCount FROM posts LEFT JOIN users ON posts.created_by = users.user_id LEFT JOIN likes ON likes.post_liked = posts.post_id GROUP BY posts.post_id, users.first_name, users.last_name, posts.content, posts.created_at ORDER BY created_at DESC`
 
 	rows, err := db.Query(sqlStatement)
 	if err != nil {
@@ -39,9 +44,17 @@ func showIndexPage(c *gin.Context) {
 
 	for rows.Next() {
 		var entry post
-		rows.Scan(&entry.ID, &entry.Name, &entry.Surname, &entry.Content, &entry.Date)
+		rows.Scan(&entry.ID, &entry.Name, &entry.Surname, &entry.Content, &entry.Date, &entry.Likes)
 		posts = append(posts, entry)
+	}
+	users := make([]user, 0)
+	cookie, _ := c.Cookie("token")
+	rows, _ = db.Query("SELECT first_name FROM users WHERE user_id=$1", cookie)
 
+	for rows.Next() {
+		var person user
+		rows.Scan(&person.Name)
+		users = append(users, person)
 	}
 
 	c.HTML(
@@ -50,6 +63,7 @@ func showIndexPage(c *gin.Context) {
 		gin.H{
 			"title":   "Home Page",
 			"payload": posts,
+			"user": users,
 		},
 	)
 }

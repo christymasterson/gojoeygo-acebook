@@ -8,7 +8,7 @@ import (
 )
 
 func createLike(c *gin.Context) {
-  post := c.PostForm(".ID")
+  post := c.PostForm("post_id")
 
 	cookie, _ := c.Cookie("token")
 

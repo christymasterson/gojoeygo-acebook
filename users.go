@@ -52,10 +52,8 @@ func signUp(c *gin.Context) {
 		panic(err)
 	}
 
-	var sameSiteCookie http.SameSite;
-
 	token := strconv.FormatInt(rand.Int63(), 16)
-	c.SetCookie("token", token, 3600, "", "", sameSiteCookie, false, true)
+	c.SetCookie("token", token, 3600, "", "", false, true)
 	c.Set("is_logged_in", true)
 
 	c.Redirect(
@@ -89,11 +87,9 @@ func logIn(c *gin.Context) {
 
 	if password == rpassword {
 
-		var sameSiteCookie http.SameSite;
-
 		token := strconv.Itoa(user_id)
 
-		c.SetCookie("token", token, 3600, "", "", sameSiteCookie, false, true)
+		c.SetCookie("token", token, 3600, "", "", false, true)
 		c.Set("is_logged_in", true)
 
 		c.Redirect(
@@ -113,9 +109,7 @@ func logIn(c *gin.Context) {
 func logOut(c *gin.Context) {
 	// Clear the cookie
 
-	var sameSiteCookie http.SameSite;
-	
-	c.SetCookie("token", "", -1, "", "", sameSiteCookie, false, true)
+	c.SetCookie("token", "", -1, "", "", false, true)
 	c.Redirect(
 		303,
 		"/login",

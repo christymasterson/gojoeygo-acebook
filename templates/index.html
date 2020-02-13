@@ -5,7 +5,11 @@
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
 
-  <h1>Welcome to Acebook!</h1>
+  <h1>Welcome to Acebook,
+  {{range .user }}
+  {{.Name}}
+  {{end}}
+  </h1>
 
   {{range .payload }}
      <h2>{{.Content}}</h2>
@@ -13,9 +17,9 @@
    {{.Name}} {{.Surname}}
 
    <form action="/like/create" method="POST">
-
-     <input type="submit" name="{{.ID}}" value="Like">
-     </form>
+     <input type="HIDDEN" name="post_id" value="{{.ID}}">
+     {{.Likes}} <input type="submit" value="Like">
+  </form>
 
   {{end}}
 
