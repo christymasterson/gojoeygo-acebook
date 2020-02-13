@@ -51,6 +51,7 @@ func signUp(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
+
 	token := strconv.FormatInt(rand.Int63(), 16)
 	c.SetCookie("token", token, 3600, "", "", false, true)
 	c.Set("is_logged_in", true)
@@ -107,6 +108,7 @@ func logIn(c *gin.Context) {
 
 func logOut(c *gin.Context) {
 	// Clear the cookie
+
 	c.SetCookie("token", "", -1, "", "", false, true)
 	c.Redirect(
 		303,
