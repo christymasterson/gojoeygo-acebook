@@ -15,8 +15,8 @@ func TestShowHomePageUnauthenticated(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/", nil)
 	r.ServeHTTP(w, req)
 
-	if status := w.Code; status != http.StatusOK {
-			t.Errorf("handler returned wrong status code: actual %v expected %v", status, http.StatusOK)
+	if status := w.Code; status != http.StatusSeeOther {
+			t.Errorf("handler returned wrong status code: actual %v expected %v", status, http.StatusSeeOther)
 	}
 
 	p, err := ioutil.ReadAll(w.Body)

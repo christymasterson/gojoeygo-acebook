@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +25,23 @@ type user struct {
 }
 
 func showIndexPage(c *gin.Context) {
+	token, _ := c.Cookie("token")
+	cookie, _ := strconv.Atoi(token)
+	posts := getAllPosts()
+	users := getUserName(cookie)
 
+	c.HTML(
+		http.StatusOK,
+		"index.html",
+		gin.H{
+			"title":   "Home Page",
+			"payload": posts,
+			"user": users,
+		},
+	)
+}
+
+func getAllPosts() []post {
 	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
 		" dbname=%s sslmode=disable",
 		host, port, dbname)
@@ -47,25 +64,31 @@ func showIndexPage(c *gin.Context) {
 		rows.Scan(&entry.ID, &entry.Name, &entry.Surname, &entry.Content, &entry.Date, &entry.Likes)
 		posts = append(posts, entry)
 	}
+	return posts
+}
+
+func getUserName(cookie int) []user {
+	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
+		" dbname=%s sslmode=disable",
+		host, port, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
 	users := make([]user, 0)
-	cookie, _ := c.Cookie("token")
-	rows, _ = db.Query("SELECT first_name FROM users WHERE user_id=$1", cookie)
+	rows, err := db.Query("SELECT first_name FROM users WHERE user_id=$1", cookie)
+	if err != nil {
+		panic(err)
+	}
 
 	for rows.Next() {
 		var person user
 		rows.Scan(&person.Name)
 		users = append(users, person)
 	}
-
-	c.HTML(
-		http.StatusOK,
-		"index.html",
-		gin.H{
-			"title":   "Home Page",
-			"payload": posts,
-			"user": users,
-		},
-	)
+	return users
 }
 
 func showPostCreatePage(c *gin.Context) {
