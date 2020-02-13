@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -52,7 +51,17 @@ func signUp(c *gin.Context) {
 		panic(err)
 	}
 
-	token := strconv.FormatInt(rand.Int63(), 16)
+	var (
+		userCount int
+		user_id   int
+		email     string
+		password  string
+	)
+
+	db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", mail).Scan(&userCount, &user_id, &email, &password)
+
+	token := strconv.Itoa(user_id)
+
 	c.SetCookie("token", token, 3600, "", "", false, true)
 	c.Set("is_logged_in", true)
 

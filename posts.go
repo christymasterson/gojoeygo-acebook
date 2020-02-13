@@ -17,11 +17,11 @@ type post struct {
 	Surname string
 	Content string
 	Date    time.Time
-	Likes		int
+	Likes   int
 }
 
 type user struct {
-	Name    string
+	Name string
 }
 
 func showIndexPage(c *gin.Context) {
