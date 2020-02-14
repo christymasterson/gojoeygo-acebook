@@ -1,9 +1,23 @@
 <!--login.html-->
 
+<head>
+  <style>
+    body{
+      font-family: Effra, Helvetica, sans-serif;
+    }
+    .navbar.navbar-default {
+      background: #3D4351;
+      color: #00CED1;
+      font-family: Effra, Helvetica, sans-serif;
+      float: center;
+    }
+    </style>
+  </head>
+
 <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/signup">
+      <a style="color:#00CED1; font-family: Effra, Helvetica, sans-serif" class="navbar-brand" href="/signup">
         Sign up
       </a>
     </div>
@@ -13,20 +27,20 @@
 
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
-<h1>Login</h1>
-<div class="panel panel-default col-sm-6">
+<h1 style="text-align: right; margin-right: 45%; font-family: Effra, Helvetica, sans-serif">Login</h1>
+<div style="text-align: center; margin-right: 40%; margin-left: 25%; font-family: Effra, Helvetica, sans-serif" class="panel panel-default col-sm-6">
   <div class="panel-body">
     <!--Create a form that POSTs to the `/login` route-->
     <form class="form" action="/login" method="POST">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label style="font-family: Effra, Helvetica, sans-serif" for="email">Email</label>
         <input type="text" class="form-control" id="email" name="email" placeholder="email">
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
+        <label style="font-family: Effra, Helvetica, sans-serif" for="password">Password</label>
         <input type="password" class="form-control" id="password" name="password" placeholder="password">
       </div>
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button style="font-family: Effra, Helvetica, sans-serif" type="submit" class="btn btn-primary">Login</button>
     </form>
   </div>
 </div>

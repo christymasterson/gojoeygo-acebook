@@ -1,9 +1,29 @@
-<!--register.html-->
+<head>
+  <style>
+    .navbar.navbar-default {
+      background: #3D4351;
+      color: #00CED1;
+      font-family: Effra, Helvetica, sans-serif;
+    }
+
+      body {
+        font-family: "Effra", Helvetica, sans-serif;
+        }
+
+      h1 {
+        color: #3D4351;
+        font-size: 30px;
+        font-family: "Effra", Helvetica, sans-serif;
+      }
+
+
+    </style>
+</head>
 
 <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/login">
+      <a style="color:#00CED1; font-family: Effra, Helvetica, sans-serif" class="navbar-brand" href="/login">
         Log in
       </a>
     </div>
@@ -12,8 +32,8 @@
 
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
-<h1>Register</h1>
-<div class="panel panel-default col-sm-6">
+<h1 style="text-align: right; margin-right: 45%; font-family: Effra, Helvetica, sans-serif;">Register</h1>
+<div style="text-align: center; margin-right: 50%; margin-left: 25%; font-family: Effra, Helvetica, sans-serif;" class="panel panel-default col-sm-6">
   <div class="panel-body">
     <!--Create a form that POSTs to the `/signup` route-->
     <form class="form" action="/signup" method="POST">
