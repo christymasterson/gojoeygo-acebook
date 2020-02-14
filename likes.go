@@ -14,9 +14,9 @@ func createLike(c *gin.Context) {
 
 	token, _ := c.Cookie("token")
 	cookie, _ := strconv.Atoi(token)
-err := insertDBLike(cookie, post_id)
+	err := insertDBLike(cookie, post_id)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	c.Redirect(
