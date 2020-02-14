@@ -11,6 +11,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+
+	type person struct {
+		UserCount int
+		User_id   int
+		Email     string
+		Password  string
+	}
+
 func showSignUpPage(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
@@ -35,6 +43,24 @@ func signUp(c *gin.Context) {
 	lastname := c.PostForm("last_name")
 	mail := c.PostForm("email")
 	pass := c.PostForm("password")
+
+	user := registerNewUser(firstname, lastname, mail, pass)
+
+	user_id := user.User_id
+
+	token := strconv.Itoa(user_id)
+
+	c.SetCookie("token", token, 3600, "", "", false, true)
+	c.Set("is_logged_in", true)
+
+	c.Redirect(
+		303,
+		"/",
+	)
+}
+
+func registerNewUser(firstname string, lastname string, mail string, pass string) person {
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
 		" dbname=%s sslmode=disable",
 		host, port, dbname)
@@ -51,24 +77,13 @@ func signUp(c *gin.Context) {
 		panic(err)
 	}
 
-	var (
-		userCount int
-		user_id   int
-		email     string
-		password  string
-	)
+	row := db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", mail)
 
-	db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", mail).Scan(&userCount, &user_id, &email, &password)
+	var user person
 
-	token := strconv.Itoa(user_id)
+	row.Scan(&user.UserCount, &user.User_id, &user.Email, &user.Password)
 
-	c.SetCookie("token", token, 3600, "", "", false, true)
-	c.Set("is_logged_in", true)
-
-	c.Redirect(
-		303,
-		"/",
-	)
+	return user
 }
 
 func logIn(c *gin.Context) {
@@ -76,23 +91,7 @@ func logIn(c *gin.Context) {
 	remail := strings.TrimSpace(c.PostForm("email"))
 	rpassword := strings.TrimSpace(c.PostForm("password"))
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
-		" dbname=%s sslmode=disable",
-		host, port, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	var (
-		userCount int
-		user_id   int
-		email     string
-		password  string
-	)
-
-	db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", remail).Scan(&userCount, &user_id, &email, &password)
+	user_id, password := validateUser(remail, rpassword)
 
 	if password == rpassword {
 
@@ -113,6 +112,28 @@ func logIn(c *gin.Context) {
 		)
 	}
 
+}
+
+func validateUser(remail, rpassword string) (int, string) {
+	psqlInfo := fmt.Sprintf("host=%s port=%d  "+
+		" dbname=%s sslmode=disable",
+		host, port, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	var (
+		userCount int
+		user_id   int
+		email     string
+		password  string
+	)
+
+	db.QueryRow("SELECT COUNT(user_id) AS userCount, user_id, email, password FROM users WHERE email=$1 GROUP BY user_id", remail).Scan(&userCount, &user_id, &email, &password)
+
+	return user_id, password
 }
 
 func logOut(c *gin.Context) {
