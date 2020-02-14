@@ -36,6 +36,22 @@ To set up the database:
    4. Set up the databased as mentioned above.
    5. Run the app by calling ./app from the command-line.
 
+## How to run tests:
+The following commands can be run from command-line:
+- go test
+
+You can output print additional information about test function using verbose -v command:
+- go test -v
+
+Command fo checking test coverage:
+- go test -cover
+
+Command to generate detailed test coverage report:
+- go test -coverprofile=coverage.out
+
+Command for generating the coverage profile in HTML file:
+- go tool cover -html=coverage.out
+
 ## Process followed to learn Go language:
   - Learned golang by translating the projects we did in Ruby language.
   - Used the resources like 'Codecademy' and 'A Tour of Go'.
